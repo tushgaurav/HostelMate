@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        body {
+            color: #0F2830;
+            background-color: #AFF8CB;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        hr {
+            border-top: 0.4em dashed #0F2830;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            padding: 0 1em;
+        }
+
+        .logo {
+            margin: 0 auto 0 0;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1em;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: green;
+            text-decoration: none;
+        }
+
+        .home_content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+        }
+    </style>
+
+    <nav>
+        <h1 class="logo">HostelMate</h1>
+        <form method="GET" action="{% url 'home' %}">
+            <input type="text" name="q" placeholder="Search">
+        </form>
+        <ul class="nav-links">
+            <li class="nav-link"><a href="{% url 'home' %}">Home</a></li>
+            <li class="nav-link"><a href="{% url 'create_room' %}">Add Room</a></li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-link"><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+            <li class="nav-link"><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    <hr>
+    
+    <div class="home_content">
+        <div class="sidebar">
+            {% block sidecontent %}
+            {% endblock %}
+        </div>
+        <div class="content">
+          {% block content %}
+          {% endblock %}        
+        </div>
+    </div>
+</body>
+</html>

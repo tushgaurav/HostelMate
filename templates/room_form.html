@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block title %}
+Home - HostelMate
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Add a Room</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+    <hr>
+    <a href="{% url 'home' %}">Home</a>
+</div>
+{% endblock %}

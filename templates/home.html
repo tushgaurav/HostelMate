@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+{% block title %}
+Home - HostelMate
+{% endblock %}
+
+{% block sidecontent %}
+<style>
+    .sidebar-links {
+        font-size: 1.2em;
+        padding: 1rem;
+    }
+
+    .sidebar-links a {
+        color: green;
+        text-decoration: none;
+    }
+</style>
+
+{% for type in types %}
+<div class="sidebar-links">
+    <a href="{% url 'home' %}?q={{ type.name }}">{{ type.name }}</a>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .room-view a {
+        color: green;
+        text-decoration: none;
+    }
+
+    .room-view {
+    padding: 0.4rem;
+    border: 2px solid #FFEEB4;
+    max-width: 80ch;
+    margin-bottom: 1em;
+    }
+
+    .room-view_actions {
+        display: flex;
+        gap: 1em;
+    }
+</style>
+<h5>{{ count }} rooms available.</h5>
+<a href="{% url 'create_room' %}">Create Room</a>
+{% for room in rooms %}
+<div class="room-view">
+    <h3><a href="{% url 'room' room.id %}">{{ room.name }}</a> ------ {{ room.price }}</h3>
+    {% if request.user == room.host %}
+    <div class="room-view_actions">
+        <a href="{% url 'edit_room' room.id %}"><h5>edit</h5></a>
+        <a href="{% url 'delete_room' room.id %}"><h5>delete</h5></a>
+    </div>
+    {% endif %}
+    
+</div>
+{% endfor %}
+
+{% endblock %}

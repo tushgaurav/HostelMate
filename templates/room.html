@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block title %}
+{{ room.name }} - HostelMate
+{% endblock %}
+
+{% block content %}
+
+<h1>Room Page</h1>
+
+<h3><a href="{% url 'room' room.id %}">{{ room.name }}</a> ----- INR {{ room.price }}</h3>
+<h3>{{ room.description }}</h3>
+<h3>Comments -</h3>
+{% for comment in comments %}
+<div>
+    <h4>{{ comment.user }}</h4>
+    <h5>{{ comment.created }}</h5>
+    <p>{{ comment.body }}</p>
+</div><hr>
+{% endfor %}
+
+<a href="{% url 'home' %}">Home</a>
+{% endblock %}
