@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from .models import Room, Comments, Type
 from .forms import RoomForm
 from django.contrib import messages
@@ -14,7 +15,7 @@ def loginView(request):
         return redirect('home')
 
     if (request.method == "POST"):
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         try:
@@ -29,12 +30,29 @@ def loginView(request):
             return redirect('home')
         else:
             messages.error(request, "Username or password does not exist.")
-    context = {}
+    context = {'page': 'login'}
     return render(request, 'login_register.html', context)
 
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
+def registerUser(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "An error occurred during registration.")
+
+    context = {'form': form}
+    return render(request, 'login_register.html', context)
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -53,10 +71,21 @@ def home(request):
     return render(request, 'home.html', context)
 
 def room(request, pk):
-
-    comments = Comments.objects.check()
     room = Room.objects.get(id=pk)
-    context = {'room': room, 'comments': comments}
+    comments = room.comments_set.all().order_by('-created')
+    occupants = room.occupants.all()
+
+    if request.method == 'POST':
+        message = request.POST.get('body')
+        comment = Comments.objects.create(
+            user=request.user,
+            room = room,
+            body = message
+        )
+        return redirect('room', pk=room.id)
+
+
+    context = {'room': room, 'comments': comments, 'occupants': occupants}
     return render(request, 'room.html', context)
 
 @login_required(login_url='login')
@@ -95,6 +124,20 @@ def deleteRoom(request, room_id):
         return HttpResponse("You don't have the permissions to delete this room.")
     if request.method == 'POST':
         Room.delete(room)
+        return redirect('home')
+    
+    context = {}
+    return render(request, 'delete.html', context)
+
+
+@login_required(login_url='login')
+def deleteComment(request, comment_id):
+    comment = Comments.objects.get(id=comment_id)
+
+    if request.user != comment.user:
+        return HttpResponse("You don't have the permissions to delete this room.")
+    if request.method == 'POST':
+        Comments.delete(comment)
         return redirect('home')
     
     context = {}

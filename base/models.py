@@ -17,6 +17,7 @@ class Room(models.Model):
     room_type = models.ForeignKey(Type, on_delete=models.SET_NULL, null=True)
     description = models.TextField()
     location = models.CharField(max_length=255)
+    occupants = models.ManyToManyField(User, related_name='occupant', blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

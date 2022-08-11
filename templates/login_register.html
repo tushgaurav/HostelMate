@@ -4,13 +4,18 @@ Login - HostelMate
 {% endblock %}
 
 {% block content %}
-<form method="POST" action="">
-    {% if messages %}
+
 <ul class="messages">
     {% for message in messages %}
     <li>{{ message }}</li>
     {% endfor %}
 </ul>
+
+
+{% if page == 'login' %}
+<div>
+<form method="POST" action="">
+    {% if messages %}
 {% endif %}
     {% csrf_token %}
     <label for="username">Username</label>
@@ -19,4 +24,24 @@ Login - HostelMate
     <input type="password" name="password" id="password">
     <input type="submit" value="Login">
 </form>
+<p>Havent signed up yet?</p>
+<a href="{% url 'register' %}">
+    Register
+</a>
+</div>
+
+{% else %}
+
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Register">
+    </form>
+    <p>Already signed up?</p>
+    <a href="{% url 'login' %}">Login</a>
+</div>
+
+{% endif %}
+
 {% endblock %}
