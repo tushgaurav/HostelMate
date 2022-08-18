@@ -1,0 +1,14 @@
+{% for room in rooms %}
+<div class="room-view">
+    <h3><a href="{% url 'room' room.id %}">{{ room.name }}</a> ------ {{ room.price }}</h3>
+    {% if request.user == room.host %}
+    <div class="room-view_actions">
+        <a href="{% url 'edit_room' room.id %}"><h5>edit</h5></a>
+        <a href="{% url 'delete_room' room.id %}"><h5>delete</h5></a>
+    </div>
+    {% endif %}
+    
+</div>
+
+
+{% endfor %}

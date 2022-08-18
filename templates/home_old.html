@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% block title %}
+Home - HostelMate
+{% endblock %}
+
+{% block sidecontent %}
+<style>
+    .sidebar-links {
+        font-size: 1.2em;
+        padding: 1rem;
+    }
+
+    .sidebar-links a {
+        color: green;
+        text-decoration: none;
+    }
+</style>
+
+{% for type in types %}
+<div class="sidebar-links">
+    <a href="{% url 'home' %}?q={{ type.name }}">{{ type.name }}</a>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .room-view a {
+        color: green;
+        text-decoration: none;
+    }
+
+    .room-view {
+    padding: 0.4rem;
+    border: 2px solid #FFEEB4;
+    max-width: 80ch;
+    margin-bottom: 1em;
+    }
+
+    .room-view_actions {
+        display: flex;
+        gap: 1em;
+    }
+</style>
+<h5>{{ count }} rooms available.</h5>
+<a href="{% url 'create_room' %}">Create Room</a>
+{% include 'room_component.html' %}
+<div>
+    <h4>Recent Activity</h4>
+    {% for comment in room_messages %}
+    <div>@{{comment.user}}, {{comment.created | timesince}} ago -- {{comment}}</div>
+    <small>replied to {{comment.room}}</small>
+    {% if comment.user == request.user %}
+    <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+    {% endif %}
+    <hr>
+    {% endfor %}
+</div>
+{% endblock %}

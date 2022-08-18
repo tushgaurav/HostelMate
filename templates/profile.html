@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block title %}
+{{ user.username }} - HostelMate
+{% endblock %}
+{% block content %}
+
+<h2>{{ user.username }} - {{ user.first_name }}</h2>
+<h4>
+    Recent Comments -
+</h4>
+{% include 'comment_component.html' %}
+<hr>
+<h4>
+    Recent Listings - 
+</h4>
+{% include 'room_component.html' %}
+{% endblock %}

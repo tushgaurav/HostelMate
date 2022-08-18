@@ -24,6 +24,9 @@ class Room(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        ordering = ['-date_updated', '-date_added']
+
 class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -33,3 +36,6 @@ class Comments(models.Model):
 
     def __str__(self):
         return str(self.body[0:50])
+
+    class Meta:
+        ordering = ['-updated', '-created']

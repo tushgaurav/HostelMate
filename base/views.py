@@ -64,10 +64,16 @@ def home(request):
     )
 
     room_count = rooms.count()
+    room_messages = Comments.objects.all()
 
     room_types = Type.objects.all()
 
-    context = {"rooms": rooms, "types": room_types, "count": room_count}
+    context = {
+        "rooms": rooms,
+        "types": room_types,
+        "count": room_count,
+        "room_messages": room_messages
+          }
     return render(request, 'home.html', context)
 
 def room(request, pk):
@@ -88,6 +94,17 @@ def room(request, pk):
     context = {'room': room, 'comments': comments, 'occupants': occupants}
     return render(request, 'room.html', context)
 
+def userProfile(request, username):
+    user = User.objects.get(username=username)
+    rooms = user.room_set.all()
+    comments = user.comments_set.all()
+    context = {
+        'user': user,
+        'rooms': rooms,
+        'comments': comments,
+    }
+    return render(request, 'profile.html', context)
+
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
@@ -95,7 +112,9 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('home')
     return render(request, 'room_form.html', context)
 
@@ -140,5 +159,5 @@ def deleteComment(request, comment_id):
         Comments.delete(comment)
         return redirect('home')
     
-    context = {}
+    context = {'object': comment}
     return render(request, 'delete.html', context)
